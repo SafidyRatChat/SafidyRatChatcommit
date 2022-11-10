@@ -91,10 +91,21 @@
 }
 .chat .chat-history {
   padding: 30px 30px 20px;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid#434651;
   overflow-y: scroll;
   height: 575px;
 }
+
+.chat .chat-history::-webkit-scrollbar{
+  width: 2px;
+  height: 2px;
+  background:#111111;
+  
+
+  
+}
+
+
 .chat .chat-history .message-data {
   margin-bottom: 15px;
 }
@@ -143,9 +154,10 @@
 .chat .chat-message {
   position: absolute;
   width:95%;
-  padding: 5%;
   background: #434651;
   align-items: center;
+  bottom: 0;
+  right: 0;
 }
 .chat .chat-message textarea {
   border-color: #08080a;

@@ -1,14 +1,60 @@
 var doc;
+
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+function setrubrique(rubrique){
+  console.log("addessss");
+  $('#rubrique').val(rubrique);
+}
 function docsource(map){
   const dleft = '<div class="header">Slide Menu (Left)</div>';
    const dright = `<div class="header">Liens et Documents 
                     <input type="file" id="file-selector" accept=".zip" style="display: none;" />
-                     <input type="button" class="styled" value="add" onclick="document.getElementById('file-selector').click();"/><br>
+                     <input type="button" class="styled" value="add" onclick="openForm()"/><br>
                      </div>
 
                      Miala tsiny raha toa ka misy tokony mbola ampidirina, afaka manoratra ao amin'ny message isika`;
    let dcontents = `
-         <div class="content">
+         
+   
+   
+   
+   <div class="content">
+
+   <div class="form-popup" id="myForm">
+   <form  class="form-container">
+    
+ 
+     <label for="email"><b>Ajouté dans le rubrique</b></label>
+     <div class="dropdown">
+     <input id='rubrique'type="text" placeholder="selectioné">
+     <div class="dropdown-content">
+                <a type="text"  onclick="setrubrique('doalos')">DOALOS</a>
+                <a type="text"  onclick="setrubrique('decret et loi')">DECRET ET LOI</a>
+                <a type="text" onclick="setrubrique('documents')">DOCUMENTS</a>
+                <a type="text" onclick="setrubrique('seychelles')">SEYCHELLES</a>
+                </div>
+     </div>
+ 
+     <label for="psw"><b>Collez le lien du document</b></label>
+     <input id="new_link" type="text" class="dropdown">
+
+     <label for="psw"><b>Descriptions</b></label>
+     <input id="new_link" type="text" class="dropdown">
+ 
+     <button type="submit" class="btn">Add</button>
+   </form>
+ </div>
+
+
+
+
              <div class="title">DOALOS</div>
              <a href="https://www.un.org/depts/los/LEGISLATIONANDTREATIES/index.htm" target="_blank"> Maritime Space: Maritime Zones and Maritime Delimitation</a><br>
              <a href ="https://www.un.org/depts/los/LEGISLATIONANDTREATIES/depositpublicity.htm" target="_blank"> Maritime Space: deposit publicity</a><br>
