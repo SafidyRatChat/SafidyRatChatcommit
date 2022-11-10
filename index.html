@@ -3,6 +3,7 @@
 <head>
 	<title>Log in LBMap</title>
 	<link rel="stylesheet" type="text/css" href="css/log/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/loader.css">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 
 <script
@@ -20,14 +21,14 @@
     
 
 	<div class="main">
-   
+    <div class="loader" id="load">Create account...</div>
 		<input type="checkbox" id="chk" aria-hidden="true">
 
 			<div class="signup">
 				<form>
-					<label for="chk" aria-hidden="true">Sign up</label>
+					<label id="clickSU" for="chk" aria-hidden="true">Sign up</label>
           <div class="Text">
-            Natao ity mba hahafahantsika mifampiresaka sy mifampizara kokoa 
+            <div id="texmsg">Natao ity mba hahafahantsika mifampiresaka sy mifampizara kokoa </div>
           </div>
 					<input id="display_name"type="text" name="txt" placeholder="User name" required="">
 					<input id="l_email" type="email" name="email" placeholder="Email" required="">
@@ -39,7 +40,7 @@
 
 			<div class="login">
 				<form>
-					<label for="chk" aria-hidden="true">Login</label>
+					<label id="clickSI" for="chk" aria-hidden="true">Login</label>
 					<input id="log_email" type="email" name="email" placeholder="Email" required="">
 					<input id ="log_password" type="password" name="pswd" placeholder="Password" required="">
                     <button id="sign_in" type="button">Sign in</button>
@@ -48,7 +49,7 @@
 	</div>
 
     <script>
-
+document.getElementById("load").style.display = "none";
 const firebaseConfig = {
     apiKey: "AIzaSyDJoAthfAwVbe5UDQ2VdnvCt08BzwiZj04",
     authDomain: "ligne-de-base.firebaseapp.com",
@@ -70,26 +71,25 @@ const firebaseConfig = {
   const db = firebase.database();
 
   ///////////
-function current_user(){
-  const user = firebase.auth().currentUser;
-  if (user) {
-  // User is signed in, see docs for a list of available properties
-  // https://firebase.google.com/docs/reference/js/firebase.User
-  // ...
- 
-} else {
-  // No user is signed in.
-}
-}
+
 
 document.getElementById("sign_up").addEventListener("click", create_acount);
 
 
 document.getElementById("sign_in").addEventListener("click", sign_in);
 
+if(!firebase.auth().currentUser){
+  firebase.auth().signOut().then(() => {
+  // Sign-out successful.
+}).catch((error) => {
+  // An error happened.
+});
+
+console.log("outtttt")
+}
 
 function create_acount(){
-
+  document.getElementById("load").style.display = "block";
 
 var lemail=document.getElementById("l_email").value;
 var lpassword=document.getElementById("l_password").value;
@@ -97,57 +97,91 @@ var vpassword=document.getElementById("v_password").value;
 
 if(lpassword.length<=6){
   $('#l_password').addClass('wrongpwrd');
+  document.getElementById("load").style.display = "none";
 
 }
 
 
 if(lemail.split('@').length<2){
   $('#l_email').addClass('wrongpwrd');
+  document.getElementById("load").style.display = "none";
 }
 
-if(lpassword===vpassword || lpassword.lemail<=6 || lemail.split('@').length<2){
+
+//////////
+if(lemail.split('@').length<2){
+  $('#l_email').addClass('wrongpwrd');
+  document.getElementById("load").style.display = "none";
+}
+
+console.log("email:"+lemail.split('@').length)
+console.log("passwordlength:"+lpassword.length)
+
+  if(lpassword!=vpassword){
+
+    $('#v_password').addClass('wrongpwrd');
+  document.getElementById("load").style.display = "none";
+  
+  }
+
+////////////////
+if(lpassword==vpassword && lpassword.length>=6 && lemail.split('@').length>=2){
+
+
+
+
 
   firebase.auth().createUserWithEmailAndPassword(lemail, lpassword)
   .then((userCredential) => {
     // Signed in 
     var user = userCredential.user;
+    console.log(firebase.auth().currentUser);
 
-    const userr = firebase.auth().currentUser;
-        return userr.updateProfile({
-          displayName: document.getElementById("display_name").value
-        })
+    setTimeout(function(){firebase.auth().currentUser.updateProfile({
+  displayName: document.getElementById("display_name").value,
+}).then(function() {
 
-        var dispname=firebase.auth().currentUser.displayName;
-
-///loag page and pass name/////////////////////
-var canvass=document.getElementById("Extracted_curve");
-localStorage.setItem("displayname", dispname);
-
-window.location = 'map.html';
+  var displayName = firebase.auth().currentUser.displayName;
+  localStorage.setItem("displayname", displayName);
+  document.getElementById("load").style.display = "none";
+  //window.location = 'map.html';
+  
+}, function(error) {
+  // An error happened.
+});},3000)
 
     // ...
   })
   .catch((error) => {
     var errorCode = error.code;
     var errorMessage = error.message;
-    
 
+    console.log( errorMessage);
+    if(errorMessage.includes('The email address is already in use')){
+
+      
+      $("#texmsg").text('The email address is already in use by another account.');
+      $("#texmsg").css({ 'color': 'red'});
+      document.getElementById("load").style.display = "none";
+
+    }
+    
     // ..
   });
+  
+
 
 }
 
-else{
-  $('#v_password').addClass('wrongpwrd');
-}
 
-
+//window.location = 'index.html';
 
 
 }
 
 
 function sign_in(){
+  
     var email=document.getElementById("log_email").value;
     var password=document.getElementById("log_password").value;
 
@@ -171,6 +205,8 @@ window.location = 'map.html';
   .catch((error) => {
     var errorCode = error.code;
     var errorMessage = error.message;
+
+    console.log(errorMessage);
   
     if(errorMessage.includes('The password')){
 
@@ -181,19 +217,34 @@ window.location = 'map.html';
     }
 
     else if(errorMessage.includes('The email address')){
-    
-
-      //document.getElementById("log_email").addEventListener('input',$('#log_email').addClass('wrongpwrd2') );
+  
       $('#log_email').addClass('wrongpwrd');
      
 
     
     }
+
+    else if(errorMessage.includes('There is no user record')){
+  
+      $("#texmsg").text('There is no user record corresponding to this account: create an account first');
+      $("#texmsg").css({ 'color': 'red'});
+      $( "#clickSU" ).click();
+
+
+}
   
     
   });
 
 }
+
+$( "#clickSI" ).click(function() {
+  
+  $("#texmsg").text('Natao ity mba hahafahantsika mifampiresaka sy mifampizara kokoa');
+  $("#texmsg").css({ 'color': 'white'});
+ 
+});
+
 
 $('#log_email').click(function(){
         $('#log_email').removeClass('wrongpwrd');
